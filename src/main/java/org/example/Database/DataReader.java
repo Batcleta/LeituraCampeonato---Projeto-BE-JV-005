@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,7 +35,13 @@ public class DataReader implements IDataReader {
     public List<Partida> readMatches() {
         List<Partida> matches = new ArrayList<>();
         try {
-            List<String[]> data = Files.lines(Paths.get(matchUrl)).map(line -> line.split(",")).collect(Collectors.toList());
+            List<String[]> data = Files.lines(Paths.get(matchUrl))
+                    .map(line -> line.split(","))
+                    .map(array -> Arrays.stream(array)
+                            .map(str -> str.replaceAll("^\"|\"$", ""))
+                            .toArray(String[]::new))
+                    .collect(Collectors.toList());
+            data.remove(0);
 
             for (String[] match : data) {
                 matches.add(objectFactory.createMatch(match));
@@ -48,7 +55,10 @@ public class DataReader implements IDataReader {
     public List<Cartao> readCards() {
         List<Cartao> cards = new ArrayList<>();
         try {
-            List<String[]> data = Files.lines(Paths.get(cardsUrl)).map(line -> line.split(",")).collect(Collectors.toList());
+            List<String[]> data = Files.lines(Paths.get(cardsUrl))
+                    .map(line -> line.split(","))
+                    .filter(array -> array.length >= 1)
+                    .collect(Collectors.toList());
 
             for (String[] card : data) {
                 cards.add(objectFactory.createCard(card));
@@ -62,7 +72,10 @@ public class DataReader implements IDataReader {
     public List<Estatistica> readStatistics() {
         List<Estatistica> statistics = new ArrayList<>();
         try {
-            List<String[]> data = Files.lines(Paths.get(statisticsUrl)).map(line -> line.split(",")).collect(Collectors.toList());
+            List<String[]> data = Files.lines(Paths.get(statisticsUrl))
+                    .map(line -> line.split(","))
+                    .filter(array -> array.length >= 1)
+                    .collect(Collectors.toList());
 
             for (String[] statistic : data) {
                 statistics.add(objectFactory.createStatistic(statistic));
@@ -77,7 +90,10 @@ public class DataReader implements IDataReader {
         List<Gol> goals = new ArrayList<>();
 
         try {
-            List<String[]> data = Files.lines(Paths.get(goalsUrl)).map(line -> line.split(",")).collect(Collectors.toList());
+            List<String[]> data = Files.lines(Paths.get(goalsUrl))
+                    .map(line -> line.split(","))
+                    .filter(array -> array.length >= 1)
+                    .collect(Collectors.toList());
 
             for (String[] goal : data) {
                 goals.add(objectFactory.createGoal(goal));

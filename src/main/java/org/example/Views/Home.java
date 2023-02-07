@@ -2,6 +2,8 @@ package org.example.Views;
 
 import org.example.Database.Database;
 
+import java.time.format.DateTimeFormatter;
+
 public class Home {
 
     public static void init() {
@@ -19,9 +21,11 @@ public class Home {
 //            });
 
 //            >> buscarPartidas rodando ok - busca todos as partidas
-//            db.buscarPartidas().forEach(partida -> {
-//                System.out.println(partida.getData());
-//            });
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+            db.buscarPartidas().forEach(partida -> {
+                System.out.println(partida.getData().format(formatter) + " - " + partida.getHora());
+            });
 
 //            >> buscarEstatisticas rodando ok - busca todas as estatisticas
 //            db.buscarEstatisticas().forEach(estatistica -> {

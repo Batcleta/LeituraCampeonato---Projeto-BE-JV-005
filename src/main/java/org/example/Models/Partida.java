@@ -1,11 +1,14 @@
 package org.example.Models;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 public class Partida {
 
     private String ID;
     private String rodada;
-    private String data;
-    private String hora;
+    private LocalDate data;
+    private LocalTime hora;
     private String mandante;
     private String visitante;
     private String formacaoMandante;
@@ -20,7 +23,7 @@ public class Partida {
     private String visitanteEstado;
 
 
-    public Partida(String ID, String rodada, String data, String hora, String mandante,
+    public Partida(String ID, String rodada, LocalDate data, LocalTime hora, String mandante,
                    String visitante, String formacaoMandante, String formacaoVisitante,
                    String tecnicoMandante, String tecnicoVisitante, String vencedor, String arena,
                    String mandantePlacar, String visitantePlacar, String mandanteEstado, String visitanteEstado) {
@@ -50,11 +53,11 @@ public class Partida {
         return rodada;
     }
 
-    public String getData() {
+    public LocalDate getData() {
         return data;
     }
 
-    public String getHora() {
+    public LocalTime getHora() {
         return hora;
     }
 
