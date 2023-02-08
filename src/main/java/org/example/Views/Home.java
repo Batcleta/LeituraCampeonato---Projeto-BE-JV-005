@@ -1,9 +1,9 @@
 package org.example.Views;
 
-import org.example.Database.Database;
+import Database.Database;
 import org.example.Models.Partida;
+import org.example.Utils.DateConversor;
 
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,8 +46,8 @@ public class Home {
             //TESTE - Check the team who won more matches in 2008
 
 
-            timeDoAno(2008, db.buscarPartidas());
-
+//            timeDoAno(2008, db.buscarPartidas());
+            estadoComMenosJogos(2003, 2022, db.buscarPartidas());
 
         } while (executing);
     }
@@ -91,31 +91,38 @@ public class Home {
         System.out.print("\n\n");
     }
 
-    public static void timeComMenosJogos (){
+    public static void estadoComMenosJogos(int prtiodoInicial, int periodoFinal, List<Partida> partidas) {
+        List<Partida> partidasDoAno = partidas.stream().filter(partida -> {
+            int year = partida.getData().getYear();
+            return year >= prtiodoInicial && year <= periodoFinal;
+        }).collect(Collectors.toList());
+
+//        partidasDoAno.forEach(partida -> {
+//            System.out.println(DateConversor.format(partida.getData()));
+//        });
+    }
+
+    public static void jogadorComMaisGols() {
 
     }
 
-    public static void jogadorComMaisGols (){
+    public static void jogadorComMaisGolsDePênalti() {
 
     }
 
-    public static void jogadorComMaisGolsDePênalti (){
+    public static void jogadorComMaisGolsContras() {
 
     }
 
-    public static void jogadorComMaisGolsContras (){
+    public static void jogadorComMaisCartoesAmarelos() {
 
     }
 
-    public static void jogadorComMaisCartoesAmarelos (){
+    public static void jogadorComMaisCartoesVermelhos() {
 
     }
 
-    public static void jogadorComMaisCartoesVermelhos (){
-
-    }
-
-    public static void placarDaPartidaComMaisGols (){
+    public static void placarDaPartidaComMaisGols() {
 
     }
 }
