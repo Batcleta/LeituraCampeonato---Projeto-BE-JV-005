@@ -1,8 +1,8 @@
 package org.example.Views;
 
 import Database.Database;
+import org.example.Models.Gol;
 import org.example.Models.Partida;
-import org.example.Utils.DateConversor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,9 +45,12 @@ public class Home {
 
             //TESTE - Check the team who won more matches in 2008
 
-
+            System.out.println();
 //            timeDoAno(2008, db.buscarPartidas());
 //            estadoComMenosJogos(2003, 2022, db.buscarPartidas());
+            jogadorComMaisGols(db.buscarGols(), "");
+            jogadorComMaisGols(db.buscarGols(), "Penalty");
+            jogadorComMaisGols(db.buscarGols(), "Gol Contra");
 
         } while (executing);
     }
@@ -57,6 +60,7 @@ public class Home {
 
         if (partidasDoAno.size() == 0) {
             System.out.println("Não foram encontrados nenhum resultado");
+            return;
         }
         Map<String, Integer> vitoriasPorTime = new HashMap<>();
 
@@ -99,6 +103,7 @@ public class Home {
 
         if (partidasDoAno.size() == 0) {
             System.out.println("Não foram encontrados nenhum resultado");
+            return;
         }
         Map<String, Integer> partidasPorEstado = new HashMap<>();
 
@@ -109,9 +114,9 @@ public class Home {
             }
         }
 
-        for (Map.Entry<String, Integer> entry : partidasPorEstado.entrySet()) {
-            System.out.println("Key: " + entry.getKey() + " Value: " + entry.getValue());
-        }
+//        for (Map.Entry<String, Integer> entry : partidasPorEstado.entrySet()) {
+//            System.out.println("Key: " + entry.getKey() + " Value: " + entry.getValue());
+//        }
 
         int minWins = Integer.MAX_VALUE;
         List<String> pioresEstados = new ArrayList<>();
@@ -137,17 +142,49 @@ public class Home {
         System.out.print("\n\n");
     }
 
-    public static void jogadorComMaisGols() {
+    public static void jogadorComMaisGols(List<Gol> gols, String tipo) {
+        List<Gol> golsPorTipo = gols.stream().filter(gol -> gol.getTipoDeGol().equalsIgnoreCase(tipo)).collect(Collectors.toList());
 
+        if (golsPorTipo.size() == 0) {
+            System.out.println("Não foram encontrados nenhum resultado");
+            return;
+        }
+
+        Map<String, Integer> golsPorJogadores = new HashMap<>();
+
+        for (Gol gol : golsPorTipo) {
+            String jogador = gol.getAtleta();
+            if (jogador != null && !jogador.equalsIgnoreCase("-")) {
+                golsPorJogadores.put(jogador, golsPorJogadores.getOrDefault(jogador, 0) + 1);
+            }
+        }
+
+        int maxGoals = 0;
+        List<String> melhoresJogadores = new ArrayList<>();
+
+        for (Map.Entry<String, Integer> jogador : golsPorJogadores.entrySet()) {
+            if (jogador.getValue() > maxGoals) {
+                maxGoals = jogador.getValue();
+                melhoresJogadores.clear();
+                melhoresJogadores.add("Jogador: " + jogador.getKey() + ", com: " + jogador.getValue() + " gols.");
+            } else if (jogador.getValue() == maxGoals) {
+                melhoresJogadores.add("Jogador: " + jogador.getKey() + ", com: " + jogador.getValue() + " gols.");
+            }
+        }
+
+        if (melhoresJogadores.size() > 1) {
+            System.out.print("### " + melhoresJogadores.size() + (tipo.isBlank() ?
+                    " JOGADORES MARCARAM MAIS GOLS" :
+                    (" JOGADORES MARCARAM MAIS GOLS POR" + tipo.toUpperCase())) + " ###\n");
+        } else {
+            System.out.print((tipo.isBlank() ? "### JOGADOR COM MAIS GOLS ###" : ("### JOGADOR COM MAIS GOLS POR" + tipo.toUpperCase())) + " ###\n");
+        }
+
+        melhoresJogadores.forEach(System.out::println);
+
+        System.out.print("\n\n");
     }
 
-    public static void jogadorComMaisGolsDePênalti() {
-
-    }
-
-    public static void jogadorComMaisGolsContras() {
-
-    }
 
     public static void jogadorComMaisCartoesAmarelos() {
 

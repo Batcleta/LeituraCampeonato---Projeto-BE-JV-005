@@ -105,7 +105,9 @@ public class DataReader implements IDataReader {
         try {
             List<String[]> data = Files.lines(Paths.get(goalsUrl))
                     .map(line -> line.split(","))
-                    .filter(array -> array.length >= 1)
+                    .map(array -> Arrays.stream(array)
+                            .map(str -> str.replaceAll("^\"|\"$", ""))
+                            .toArray(String[]::new))
                     .collect(Collectors.toList());
 
             for (String[] goal : data) {
