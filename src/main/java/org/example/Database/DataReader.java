@@ -27,8 +27,7 @@ interface IDataReader {
 }
 
 public class DataReader implements IDataReader {
-
-    String matchUrl = "src/database/campeonato-brasileiro-full.csv";
+    String matchUrl = "https://raw.githubusercontent.com/vconceicao/ada_brasileirao_dataset/master/campeonato-brasileiro-full.csv";
     String cardsUrl = "src/database/campeonato-brasileiro-cartoes.csv";
     String statisticsUrl = "src/database/campeonato-brasileiro-estatisticas-full.csv";
     String goalsUrl = "src/database/campeonato-brasileiro-gols.csv";
@@ -41,7 +40,7 @@ public class DataReader implements IDataReader {
         List<String[]> data = null;
 
         try {
-            URL url = new URL("https://raw.githubusercontent.com/vconceicao/ada_brasileirao_dataset/master/campeonato-brasileiro-full.csv");
+            URL url = new URL(matchUrl);
             BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
             data = reader.lines()
                     .map(line -> line.split(","))
