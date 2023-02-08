@@ -61,9 +61,9 @@ public class Home {
         Map<String, Integer> vitoriasPorTime = new HashMap<>();
 
         for (Partida partida : partidasDoAno) {
-            String winner = partida.getVencedor();
-            if (winner != null && !winner.equalsIgnoreCase("-")) {
-                vitoriasPorTime.put(winner, vitoriasPorTime.getOrDefault(winner, 0) + 1);
+            String vencedor = partida.getVencedor();
+            if (vencedor != null && !vencedor.equalsIgnoreCase("-")) {
+                vitoriasPorTime.put(vencedor, vitoriasPorTime.getOrDefault(vencedor, 0) + 1);
             }
         }
 
@@ -97,9 +97,21 @@ public class Home {
             return year >= prtiodoInicial && year <= periodoFinal;
         }).collect(Collectors.toList());
 
-//        partidasDoAno.forEach(partida -> {
-//            System.out.println(DateConversor.format(partida.getData()));
-//        });
+        if (partidasDoAno.size() == 0) {
+            System.out.println("Não foram encontrados nenhum resultado");
+        }
+        Map<String, Integer> partidasPorEstado = new HashMap<>();
+
+        for (Partida partida : partidasDoAno) {
+            String estado = partida.getMandanteEstado();
+            if (estado != null && !estado.equalsIgnoreCase("-")) {
+                partidasPorEstado.put(estado, partidasPorEstado.getOrDefault(estado, 0) + 1);
+            }
+        }
+
+        for (Map.Entry<String, Integer> entry : partidasPorEstado.entrySet()) {
+            System.out.println("Key: " + entry.getKey() + " Value: " + entry.getValue());
+        }
     }
 
     public static void jogadorComMaisGols() {
