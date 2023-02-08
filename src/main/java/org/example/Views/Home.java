@@ -46,13 +46,13 @@ public class Home {
             //TESTE - Check the team who won more matches in 2008
 
 
-            TimeDoAno(2008, db.buscarPartidas());
+            timeDoAno(2008, db.buscarPartidas());
 
 
         } while (executing);
     }
 
-    public static void TimeDoAno(int ano, List<Partida> partidas) {
+    public static void timeDoAno(int ano, List<Partida> partidas) {
         List<Partida> partidasDoAno = partidas.stream().filter(partida -> partida.getData().getYear() == ano).collect(Collectors.toList());
 
         if (partidasDoAno.size() == 0) {
@@ -89,5 +89,33 @@ public class Home {
         melhoresTimes.forEach(System.out::println);
 
         System.out.print("\n\n");
+    }
+
+    public static void timeComMenosJogos (){
+
+    }
+
+    public static void jogadorComMaisGols (){
+
+    }
+
+    public static void jogadorComMaisGolsDePênalti (){
+
+    }
+
+    public static void jogadorComMaisGolsContras (){
+
+    }
+
+    public static void jogadorComMaisCartoesAmarelos (){
+
+    }
+
+    public static void jogadorComMaisCartoesVermelhos (){
+
+    }
+
+    public static void placarDaPartidaComMaisGols (){
+
     }
 }
