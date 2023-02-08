@@ -1,8 +1,14 @@
 package org.example.Views;
 
 import org.example.Database.Database;
+import org.example.Models.Partida;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Home {
 
@@ -21,13 +27,11 @@ public class Home {
 //            });
 
 //            >> buscarPartidas rodando ok - busca todos as partidas
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-
-            db.buscarPartidas().forEach(partida -> {
-                System.out.println(partida.getID());
-                System.out.println(partida.getData().format(formatter) + " - " + partida.getHora());
-            });
+//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+//            db.buscarPartidas().forEach(partida -> {
+//                System.out.println(partida.getID());
+//                System.out.println(partida.getData().format(formatter) + " - " + partida.getHora());
+//            });
 
 //            >> buscarEstatisticas rodando ok - busca todas as estatisticas
 //            db.buscarEstatisticas().forEach(estatistica -> {
@@ -39,7 +43,51 @@ public class Home {
 //                System.out.println(gol.getAtleta());
 //            });
 
+            //TESTE - Check the team who won more matches in 2008
+
+
+            TimeDoAno(2008, db.buscarPartidas());
+
 
         } while (executing);
+    }
+
+    public static void TimeDoAno(int ano, List<Partida> partidas) {
+        List<Partida> partidasDoAno = partidas.stream().filter(partida -> partida.getData().getYear() == ano).collect(Collectors.toList());
+
+        if (partidasDoAno.size() == 0) {
+            System.out.println("Não foram encontrados nenhum resultado");
+        }
+        Map<String, Integer> vitoriasPorTime = new HashMap<>();
+
+        for (Partida partida : partidasDoAno) {
+            String winner = partida.getVencedor();
+            if (winner != null && !winner.equalsIgnoreCase("-")) {
+                vitoriasPorTime.put(winner, vitoriasPorTime.getOrDefault(winner, 0) + 1);
+            }
+        }
+
+        int maxWins = 0;
+        List<String> melhoresTimes = new ArrayList<>();
+
+        for (Map.Entry<String, Integer> time : vitoriasPorTime.entrySet()) {
+            if (time.getValue() > maxWins) {
+                maxWins = time.getValue();
+                melhoresTimes.clear();
+                melhoresTimes.add("Time: " + time.getKey() + ", com: " + time.getValue() + " vitórias.");
+            } else if (time.getValue() == maxWins) {
+                melhoresTimes.add("Time: " + time.getKey() + ", com: " + time.getValue() + " vitórias.");
+            }
+        }
+
+        if (melhoresTimes.size() > 1) {
+            System.out.print("\nFORAM " + melhoresTimes.size() + " TIMES VITORIOSOS\n\n");
+        } else {
+            System.out.print("TIME VITORIOSO\n");
+        }
+
+        melhoresTimes.forEach(System.out::println);
+
+        System.out.print("\n\n");
     }
 }
