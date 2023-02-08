@@ -23,7 +23,9 @@ public class Home {
 //            >> buscarPartidas rodando ok - busca todos as partidas
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
+
             db.buscarPartidas().forEach(partida -> {
+                System.out.println(partida.getID());
                 System.out.println(partida.getData().format(formatter) + " - " + partida.getHora());
             });
 
