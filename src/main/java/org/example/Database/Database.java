@@ -1,4 +1,4 @@
-package Database;
+package org.example.Database;
 
 import org.example.Models.Cartao;
 import org.example.Models.Estatistica;

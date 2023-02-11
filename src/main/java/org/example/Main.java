@@ -1,6 +1,6 @@
 package org.example;
 
-import Database.Database;
+import org.example.Database.Database;
 import org.example.Views.Home;
 
 public class Main {

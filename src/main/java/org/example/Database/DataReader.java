@@ -1,4 +1,4 @@
-package Database;
+package org.example.Database;
 
 import org.example.Models.Cartao;
 import org.example.Models.Estatistica;
@@ -70,8 +70,11 @@ public class DataReader implements IDataReader {
         try {
             List<String[]> data = Files.lines(Paths.get(cardsUrl))
                     .map(line -> line.split(","))
-                    .filter(array -> array.length >= 1)
+                    .map(array -> Arrays.stream(array)
+                            .map(str -> str.replaceAll("^\"|\"$", ""))
+                            .toArray(String[]::new))
                     .collect(Collectors.toList());
+            data.remove(0);
 
             for (String[] card : data) {
                 cards.add(objectFactory.createCard(card));
@@ -109,6 +112,7 @@ public class DataReader implements IDataReader {
                             .map(str -> str.replaceAll("^\"|\"$", ""))
                             .toArray(String[]::new))
                     .collect(Collectors.toList());
+            data.remove(0);
 
             for (String[] goal : data) {
                 goals.add(objectFactory.createGoal(goal));
