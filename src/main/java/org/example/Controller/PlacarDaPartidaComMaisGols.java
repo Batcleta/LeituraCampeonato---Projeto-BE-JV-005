@@ -32,7 +32,7 @@ public class PlacarDaPartidaComMaisGols {
 
         for (Gol gol : gols) {
             String partida = gol.getPartidaId();
-            String jogador = gol.getAtleta();
+            String jogador = gol.getAtleta() + " - " + gol.getClube();
             if (partida != null && !partida.equalsIgnoreCase("-") && jogador != null && !jogador.equalsIgnoreCase("-")) {
                 golsPorPartidaPorJogador.computeIfAbsent(partida, k -> new HashMap<>());
                 golsPorPartidaPorJogador.get(partida).compute(jogador, (key, value) -> value == null ? 1 : value + 1);
@@ -53,7 +53,7 @@ public class PlacarDaPartidaComMaisGols {
 
                 StringBuilder sb = new StringBuilder();
                 sb.append("Partida: " + golsPorJogador.getKey() + "\nGols: " + maxGoals + "\nPlacar: " +
-                        partida.getMandantePlacar() + " - " + partida.getMandante() + " X " +
+                        partida.getMandante() + " - " + partida.getMandantePlacar() + " X " +
                         partida.getVisitantePlacar() + " - " + partida.getVisitante() + "\n");
                 for (Map.Entry<String, Integer> golPorJogador : golsPorJogadorNaPartida.entrySet()) {
                     sb.append("Jogador: " + golPorJogador.getKey() + " | Gols: " + golPorJogador.getValue() + "\n");
@@ -67,7 +67,7 @@ public class PlacarDaPartidaComMaisGols {
 
                 StringBuilder sb = new StringBuilder();
                 sb.append("Partida: " + golsPorJogador.getKey() + " | Gols: " + maxGoals + "\nPlacar: " +
-                        partida.getMandantePlacar() + " - " + partida.getMandante() + " X " +
+                        partida.getMandante() + " - " + partida.getMandantePlacar() + " X " +
                         partida.getVisitantePlacar() + " - " + partida.getVisitante() + "\n");
                 for (Map.Entry<String, Integer> golPorJogador : golsPorJogadorInMatch.entrySet()) {
                     sb.append(" Jogador: " + golPorJogador.getKey() + " | Gols: " + golPorJogador.getValue() + "\n");
