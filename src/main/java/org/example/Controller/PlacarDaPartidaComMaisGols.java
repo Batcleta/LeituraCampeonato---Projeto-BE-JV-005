@@ -49,13 +49,13 @@ public class PlacarDaPartidaComMaisGols {
                 pioresEstados.clear();
 
                 Partida partida = db.buscarPartidaPorId(golsPorJogador.getKey());
-                Map<String, Integer> golsPorJogadorInMatch = golsPorJogador.getValue();
+                Map<String, Integer> golsPorJogadorNaPartida = golsPorJogador.getValue();
 
                 StringBuilder sb = new StringBuilder();
                 sb.append("Partida: " + golsPorJogador.getKey() + "\nGols: " + maxGoals + "\nPlacar: " +
                         partida.getMandantePlacar() + " - " + partida.getMandante() + " X " +
                         partida.getVisitantePlacar() + " - " + partida.getVisitante() + "\n");
-                for (Map.Entry<String, Integer> golPorJogador : golsPorJogadorInMatch.entrySet()) {
+                for (Map.Entry<String, Integer> golPorJogador : golsPorJogadorNaPartida.entrySet()) {
                     sb.append("Jogador: " + golPorJogador.getKey() + " | Gols: " + golPorJogador.getValue() + "\n");
                 }
 
