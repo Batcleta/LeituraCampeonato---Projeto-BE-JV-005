@@ -19,42 +19,66 @@ public class PlacarDaPartidaComMaisGols {
             return;
         }
 
-        Map<String, Integer> golsPorPartida = new HashMap<>();
+        Map<String, Map<String, Integer>> golsPorPartidaPorJogador = new HashMap<>();
 
-        for (
-                Gol gol : gols) {
+//        for (Gol gol : gols) {
+//            String partida = gol.getPartidaId();
+//            String jogador = gol.getAtleta();
+//            if (partida != null && !partida.equalsIgnoreCase("-") && jogador != null && !jogador.equalsIgnoreCase("-")) {
+//                golsPorPartidaPorJogador.putIfAbsent(partida, new HashMap<>());
+//                golsPorPartidaPorJogador.get(partida).put(jogador, golsPorPartidaPorJogador.get(partida).getOrDefault(jogador, 0) + 1);
+//            }
+//        }
+
+        for (Gol gol : gols) {
             String partida = gol.getPartidaId();
-            if (partida != null && !partida.equalsIgnoreCase("-")) {
-                golsPorPartida.put(partida, golsPorPartida.getOrDefault(partida, 0) + 1);
+            String jogador = gol.getAtleta();
+            if (partida != null && !partida.equalsIgnoreCase("-") && jogador != null && !jogador.equalsIgnoreCase("-")) {
+                golsPorPartidaPorJogador.computeIfAbsent(partida, k -> new HashMap<>());
+                golsPorPartidaPorJogador.get(partida).compute(jogador, (key, value) -> value == null ? 1 : value + 1);
             }
         }
 
         int maxGoals = 0;
         List<String> pioresEstados = new ArrayList<>();
 
-        for (
-                Map.Entry<String, Integer> gol : golsPorPartida.entrySet()) {
-            if (gol.getValue() > maxGoals) {
-                maxGoals = gol.getValue();
+        for (Map.Entry<String, Map<String, Integer>> golsPorJogador : golsPorPartidaPorJogador.entrySet()) {
+            int golsNaPartida = golsPorJogador.getValue().values().stream().mapToInt(Integer::intValue).sum();
+            if (golsNaPartida > maxGoals) {
+                maxGoals = golsNaPartida;
                 pioresEstados.clear();
 
-                Partida partida = db.buscarPartidaPorId(gol.getKey());
+                Partida partida = db.buscarPartidaPorId(golsPorJogador.getKey());
+                Map<String, Integer> golsPorJogadorInMatch = golsPorJogador.getValue();
 
-                pioresEstados.add("Partida: " + gol.getKey() + ", com: " + gol.getValue() + " com o placar final de: " +
+                StringBuilder sb = new StringBuilder();
+                sb.append("Partida: " + golsPorJogador.getKey() + "\nGols: " + maxGoals + "\nPlacar: " +
                         partida.getMandantePlacar() + " - " + partida.getMandante() + " X " +
-                        partida.getVisitantePlacar() + " - " + partida.getVisitante());
-            } else if (gol.getValue() == maxGoals) {
+                        partida.getVisitantePlacar() + " - " + partida.getVisitante() + "\n");
+                for (Map.Entry<String, Integer> golPorJogador : golsPorJogadorInMatch.entrySet()) {
+                    sb.append("Jogador: " + golPorJogador.getKey() + " | Gols: " + golPorJogador.getValue() + "\n");
+                }
 
-                Partida partida = db.buscarPartidaPorId(gol.getKey());
+                pioresEstados.add(sb.toString());
+            } else if (golsNaPartida == maxGoals) {
 
-                pioresEstados.add("Partida: " + gol.getKey() + ", com: " + gol.getValue() + " com o placar final de: " +
+                Partida partida = db.buscarPartidaPorId(golsPorJogador.getKey());
+                Map<String, Integer> golsPorJogadorInMatch = golsPorJogador.getValue();
+
+                StringBuilder sb = new StringBuilder();
+                sb.append("Partida: " + golsPorJogador.getKey() + " | Gols: " + maxGoals + "\nPlacar: " +
                         partida.getMandantePlacar() + " - " + partida.getMandante() + " X " +
-                        partida.getVisitantePlacar() + " - " + partida.getVisitante());
+                        partida.getVisitantePlacar() + " - " + partida.getVisitante() + "\n");
+                for (Map.Entry<String, Integer> golPorJogador : golsPorJogadorInMatch.entrySet()) {
+                    sb.append(" Jogador: " + golPorJogador.getKey() + " | Gols: " + golPorJogador.getValue() + "\n");
+                }
+
+                pioresEstados.add(sb.toString());
             }
         }
 
         if (pioresEstados.size() > 1) {
-            System.out.print("\nFORAM " + pioresEstados.size() + " TIMES VITORIOSOS\n\n");
+            System.out.print("\nFORAM " + pioresEstados.size() + " TIMES EMPATADOS EM MAIS GOLS\n\n");
         } else {
             System.out.print("TIME VITORIOSO\n");
         }
