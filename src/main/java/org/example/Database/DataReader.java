@@ -28,15 +28,14 @@ interface IDataReader {
 
 public class DataReader implements IDataReader {
     String matchUrl = "https://raw.githubusercontent.com/vconceicao/ada_brasileirao_dataset/master/campeonato-brasileiro-full.csv";
-    String cardsUrl = "src/database/campeonato-brasileiro-cartoes.csv";
-    String statisticsUrl = "src/database/campeonato-brasileiro-estatisticas-full.csv";
-    String goalsUrl = "src/database/campeonato-brasileiro-gols.csv";
+    String cardsUrl = "https://raw.githubusercontent.com/vconceicao/ada_brasileirao_dataset/master/campeonato-brasileiro-cartoes.csv";
+    String statisticsUrl = "https://raw.githubusercontent.com/vconceicao/ada_brasileirao_dataset/master/campeonato-brasileiro-estatisticas-full.csv";
+    String goalsUrl = "https://raw.githubusercontent.com/vconceicao/ada_brasileirao_dataset/master/campeonato-brasileiro-gols.csv";
 
     private ObjectFactory objectFactory = new ObjectFactory();
 
     public List<Partida> readMatches() {
         List<Partida> matches = new ArrayList<>();
-
         List<String[]> data = null;
 
         try {
@@ -67,60 +66,93 @@ public class DataReader implements IDataReader {
 
     public List<Cartao> readCards() {
         List<Cartao> cards = new ArrayList<>();
+        List<String[]> data = null;
+
         try {
-            List<String[]> data = Files.lines(Paths.get(cardsUrl))
+            URL url = new URL(cardsUrl);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+            data = reader.lines()
                     .map(line -> line.split(","))
                     .map(array -> Arrays.stream(array)
                             .map(str -> str.replaceAll("^\"|\"$", ""))
                             .toArray(String[]::new))
                     .collect(Collectors.toList());
+            reader.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (data != null) {
             data.remove(0);
 
             for (String[] card : data) {
                 cards.add(objectFactory.createCard(card));
             }
-            return cards;
-        } catch (Exception ex) {
-            return cards;
         }
+
+        return cards;
     }
 
     public List<Estatistica> readStatistics() {
         List<Estatistica> statistics = new ArrayList<>();
-        try {
-            List<String[]> data = Files.lines(Paths.get(statisticsUrl))
-                    .map(line -> line.split(","))
-                    .filter(array -> array.length >= 1)
-                    .collect(Collectors.toList());
-
-            for (String[] statistic : data) {
-                statistics.add(objectFactory.createStatistic(statistic));
-            }
-            return statistics;
-        } catch (Exception ex) {
-            return statistics;
-        }
-    }
-
-    public List<Gol> readGoals() {
-        List<Gol> goals = new ArrayList<>();
+        List<String[]> data = null;
 
         try {
-            List<String[]> data = Files.lines(Paths.get(goalsUrl))
+            URL url = new URL(statisticsUrl);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+            data = reader.lines()
                     .map(line -> line.split(","))
                     .map(array -> Arrays.stream(array)
                             .map(str -> str.replaceAll("^\"|\"$", ""))
                             .toArray(String[]::new))
                     .collect(Collectors.toList());
+            reader.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (data != null) {
+            data.remove(0);
+
+            for (String[] statistic : data) {
+                statistics.add(objectFactory.createStatistic(statistic));
+            }
+        }
+
+        return statistics;
+    }
+
+    public List<Gol> readGoals() {
+        List<Gol> goals = new ArrayList<>();
+        List<String[]> data = null;
+
+        try {
+            URL url = new URL(goalsUrl);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+            data = reader.lines()
+                    .map(line -> line.split(","))
+                    .map(array -> Arrays.stream(array)
+                            .map(str -> str.replaceAll("^\"|\"$", ""))
+                            .toArray(String[]::new))
+                    .collect(Collectors.toList());
+            reader.close();
+
+
+        } catch (Exception ex) {
+            return goals;
+        }
+
+        if (data != null) {
             data.remove(0);
 
             for (String[] goal : data) {
                 goals.add(objectFactory.createGoal(goal));
             }
-            return goals;
-        } catch (Exception ex) {
-            return goals;
         }
+
+        return goals;
     }
 
 }
