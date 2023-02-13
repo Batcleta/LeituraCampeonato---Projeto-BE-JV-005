@@ -15,13 +15,13 @@ public class Home {
         List<Partida> partidas = db.buscarPartidas();
         List<Gol> gols = db.buscarGols();
         List<Cartao> cartoes = db.buscarCartoes();
-        boolean executing;
+        boolean executing = true;
         int option;
 
-        do {
-            executing = false;
+        while (executing) {
 
-            option = MenuCreator.exec("DIGITE A OPÇÃO DESEJADA:", "SAIR",
+            option = MenuCreator.exec("DIGITE A OPÇÃO DESEJADA:",
+                    "SAIR",
                     "Time que mais venceu jogos no ano 2008",
                     "Estado que teve menos jogos dentro do período 2003 e 2022",
                     "jogador que mais fez gols",
@@ -29,8 +29,7 @@ public class Home {
                     "jogador que mais fez gols contras",
                     "jogador que mais recebeu cartões amarelos",
                     "jogador que mais recebeu cartões vermelhos",
-                    "placar da partida com mais gols"
-            );
+                    "placar da partida com mais gols");
 
             System.out.println();
 
@@ -43,10 +42,12 @@ public class Home {
                 case 6 -> JogadorComMaisCartoes.JogadorComMaisCartoes(cartoes, "Amarelo");
                 case 7 -> JogadorComMaisCartoes.JogadorComMaisCartoes(cartoes, "Vermelho");
                 case 8 -> PlacarDaPartidaComMaisGols.placarDaPartidaComMaisGols(db);
-                case 0 -> System.out.println("ENCERRANDO APLICAÇÃO");
+                case 0 -> {
+                    System.out.println("ENCERRANDO APLICAÇÃO");
+                    executing = false;
+                }
                 default -> System.out.println("OPÇÃO INVÁLIDA");
             }
-
-        } while (executing);
+        }
     }
 }
