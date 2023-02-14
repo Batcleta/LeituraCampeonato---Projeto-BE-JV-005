@@ -1,10 +1,9 @@
 package org.example.Controller;
 
 import org.example.Models.Cartao;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class JogadorComMaisCartoes {
@@ -17,43 +16,16 @@ public class JogadorComMaisCartoes {
             return;
         }
 
-        Map<String, Integer> cartoesPorJogadores = new HashMap<>();
+        Map<String, Long> cartoesPorJogadores = cartaoPorTipo.stream()
+                .filter(cartao -> cartao.getAtleta() != null && !cartao.getAtleta().equalsIgnoreCase("-"))
+                .collect(Collectors.groupingBy(Cartao::getAtleta, Collectors.counting()));
 
-        for (Cartao cartao : cartaoPorTipo) {
-            String jogador = cartao.getAtleta();
-            if (jogador != null && !jogador.equalsIgnoreCase("-")) {
-                cartoesPorJogadores.put(jogador, cartoesPorJogadores.getOrDefault(jogador, 0) + 1);
-            }
-        }
+        String jogadoresComMaisCartoes = cartoesPorJogadores.entrySet().stream()
+                .filter(entry -> entry.getValue() == Collections.max(cartoesPorJogadores.values()))
+                .map(entry -> "Jogador: " + entry.getKey() + ", com: " + entry.getValue() + " cartões.")
+                .collect(Collectors.joining(", "));
 
-        int maxCards = 0;
-        List<String> jogadoresComMaisCartoes = new ArrayList<>();
-
-        for (Map.Entry<String, Integer> jogador : cartoesPorJogadores.entrySet()) {
-            if (jogador.getValue() > maxCards) {
-                maxCards = jogador.getValue();
-                jogadoresComMaisCartoes.clear();
-                jogadoresComMaisCartoes.add("Jogador: " + jogador.getKey() + ", com: " + jogador.getValue() + " cartões.");
-            } else if (jogador.getValue() == maxCards) {
-                jogadoresComMaisCartoes.add("Jogador: " + jogador.getKey() + ", com: " + jogador.getValue() + " cartões.");
-            }
-        }
-
-        if (jogadoresComMaisCartoes.size() > 1) {
-            System.out.print("### " + jogadoresComMaisCartoes.size() + (tipo.isBlank() ?
-                    " JOGADORES COM MAIS CARTÕES" :
-                    (" JOGADORES COM MAIS CARTÕES " + tipo.toUpperCase())) + " ###\n");
-        } else {
-            System.out.print((tipo.isBlank() ? "### JOGADOR COM MAIS CARTÕES ###" : ("### JOGADOR COM MAIS CARTÕES POR " + tipo.toUpperCase())) + " ###\n");
-        }
-
-        jogadoresComMaisCartoes.forEach(System.out::println);
-
+        System.out.println("Jogadores com mais cartões\n" + jogadoresComMaisCartoes);
         System.out.print("\n\n");
-
-
-
     }
-
-
 }
