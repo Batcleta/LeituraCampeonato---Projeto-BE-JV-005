@@ -8,76 +8,52 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class PlacarDaPartidaComMaisGols {
 
     public static void placarDaPartidaComMaisGols(Database db) {
         List<Gol> gols = db.buscarGols();
 
-        if (gols.size() == 0) {
-            System.out.println("Não foram encontrados nenhum resultado");
+        if (gols.isEmpty()) {
+            System.out.println("No results found");
             return;
         }
 
-        Map<String, Map<String, Integer>> golsPorPartidaPorJogador = new HashMap<>();
+        Map<String, Map<String, Integer>> golsPorPartidaPorJogador = gols.stream()
+                .filter(gol -> gol.getPartidaId() != null && !gol.getPartidaId().equalsIgnoreCase("-"))
+                .filter(gol -> gol.getAtleta() != null && !gol.getAtleta().equalsIgnoreCase("-"))
+                .collect(Collectors.groupingBy(Gol::getPartidaId,
+                        Collectors.toMap(gol -> gol.getAtleta() + " - " + gol.getClube(),
+                                gol -> 1, Integer::sum)));
 
+        List<String> matchesWithMaxGoals = golsPorPartidaPorJogador.entrySet().stream()
+                .map(entry -> {
+                    Partida partida = db.buscarPartidaPorId(entry.getKey());
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("Partida: " + entry.getKey() + "\nGols: " + entry.getValue().values().stream().mapToInt(Integer::intValue).sum() + "\nPlacar: " +
+                            partida.getMandante() + " - " + partida.getMandantePlacar() + " X " +
+                            partida.getVisitantePlacar() + " - " + partida.getVisitante() + "\n");
+                    entry.getValue().forEach((jogador, gol) -> sb.append("Jogador: " + jogador + " | Gols: " + gol + "\n"));
+                    return sb.toString();
+                })
+                .collect(Collectors.groupingBy(match -> {
+                    int goals = match.chars().filter(c -> c == 'G').map(c -> 1).sum();
+                    return goals;
+                }))
+                .entrySet().stream()
+                .max(Map.Entry.comparingByKey())
+                .map(Map.Entry::getValue)
+                .orElse(List.of());
 
-        for (Gol gol : gols) {
-            String partida = gol.getPartidaId();
-            String jogador = gol.getAtleta() + " - " + gol.getClube();
-            if (partida != null && !partida.equalsIgnoreCase("-") && jogador != null && !jogador.equalsIgnoreCase("-")) {
-                golsPorPartidaPorJogador.computeIfAbsent(partida, k -> new HashMap<>());
-                golsPorPartidaPorJogador.get(partida).compute(jogador, (key, value) -> value == null ? 1 : value + 1);
-            }
-        }
-
-        int maxGoals = 0;
-        List<String> pioresEstados = new ArrayList<>();
-
-        for (Map.Entry<String, Map<String, Integer>> golsPorJogador : golsPorPartidaPorJogador.entrySet()) {
-            int golsNaPartida = golsPorJogador.getValue().values().stream().mapToInt(Integer::intValue).sum();
-            if (golsNaPartida > maxGoals) {
-                maxGoals = golsNaPartida;
-                pioresEstados.clear();
-
-                Partida partida = db.buscarPartidaPorId(golsPorJogador.getKey());
-                Map<String, Integer> golsPorJogadorNaPartida = golsPorJogador.getValue();
-
-                StringBuilder sb = new StringBuilder();
-                sb.append("Partida: " + golsPorJogador.getKey() + "\nGols: " + maxGoals + "\nPlacar: " +
-                        partida.getMandante() + " - " + partida.getMandantePlacar() + " X " +
-                        partida.getVisitantePlacar() + " - " + partida.getVisitante() + "\n");
-                for (Map.Entry<String, Integer> golPorJogador : golsPorJogadorNaPartida.entrySet()) {
-                    sb.append("Jogador: " + golPorJogador.getKey() + " | Gols: " + golPorJogador.getValue() + "\n");
-                }
-
-                pioresEstados.add(sb.toString());
-            } else if (golsNaPartida == maxGoals) {
-
-                Partida partida = db.buscarPartidaPorId(golsPorJogador.getKey());
-                Map<String, Integer> golsPorJogadorInMatch = golsPorJogador.getValue();
-
-                StringBuilder sb = new StringBuilder();
-                sb.append("Partida: " + golsPorJogador.getKey() + " | Gols: " + maxGoals + "\nPlacar: " +
-                        partida.getMandante() + " - " + partida.getMandantePlacar() + " X " +
-                        partida.getVisitantePlacar() + " - " + partida.getVisitante() + "\n");
-                for (Map.Entry<String, Integer> golPorJogador : golsPorJogadorInMatch.entrySet()) {
-                    sb.append(" Jogador: " + golPorJogador.getKey() + " | Gols: " + golPorJogador.getValue() + "\n");
-                }
-
-                pioresEstados.add(sb.toString());
-            }
-        }
-
-        if (pioresEstados.size() > 1) {
-            System.out.print("\nFORAM " + pioresEstados.size() + " TIMES EMPATADOS EM MAIS GOLS\n\n");
+        if (matchesWithMaxGoals.size() > 1) {
+            System.out.println("\nTHERE WERE " + matchesWithMaxGoals.size() + " MATCHES TIED FOR THE MOST GOALS\n\n");
         } else {
-            System.out.print("TIME VITORIOSO\n");
+            System.out.println("WINNING MATCH\n");
         }
 
-        pioresEstados.forEach(System.out::println);
+        matchesWithMaxGoals.forEach(System.out::println);
 
-        System.out.print("\n\n");
+        System.out.println("\n\n");
     }
-
 }
