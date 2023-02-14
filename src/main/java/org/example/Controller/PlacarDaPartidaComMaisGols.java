@@ -21,14 +21,6 @@ public class PlacarDaPartidaComMaisGols {
 
         Map<String, Map<String, Integer>> golsPorPartidaPorJogador = new HashMap<>();
 
-//        for (Gol gol : gols) {
-//            String partida = gol.getPartidaId();
-//            String jogador = gol.getAtleta();
-//            if (partida != null && !partida.equalsIgnoreCase("-") && jogador != null && !jogador.equalsIgnoreCase("-")) {
-//                golsPorPartidaPorJogador.putIfAbsent(partida, new HashMap<>());
-//                golsPorPartidaPorJogador.get(partida).put(jogador, golsPorPartidaPorJogador.get(partida).getOrDefault(jogador, 0) + 1);
-//            }
-//        }
 
         for (Gol gol : gols) {
             String partida = gol.getPartidaId();
