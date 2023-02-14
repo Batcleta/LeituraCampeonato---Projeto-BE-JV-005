@@ -4,8 +4,6 @@ import org.example.Database.Database;
 import org.example.Models.Gol;
 import org.example.Models.Partida;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
