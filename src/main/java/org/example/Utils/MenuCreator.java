@@ -14,6 +14,8 @@ public class MenuCreator {
                 }
 
                 chooseYourDestiny = Input.integer("Escolha uma das opções: ");
+
+
                 System.out.println("");
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
