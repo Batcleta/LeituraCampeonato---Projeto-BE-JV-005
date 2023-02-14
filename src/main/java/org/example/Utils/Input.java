@@ -8,7 +8,6 @@ public class Input {
 
         int option = 0;
         int tentadas = 0;
-
         boolean isInvalid;
 
         do {

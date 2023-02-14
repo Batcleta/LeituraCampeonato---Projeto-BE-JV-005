@@ -16,7 +16,7 @@ public class PlacarDaPartidaComMaisGols {
         List<Gol> gols = db.buscarGols();
 
         if (gols.isEmpty()) {
-            System.out.println("No results found");
+            System.out.println("Não foram encontrados resultados");
             return;
         }
 
@@ -27,7 +27,7 @@ public class PlacarDaPartidaComMaisGols {
                         Collectors.toMap(gol -> gol.getAtleta() + " - " + gol.getClube(),
                                 gol -> 1, Integer::sum)));
 
-        List<String> matchesWithMaxGoals = golsPorPartidaPorJogador.entrySet().stream()
+        List<String> partidasComMaisGols = golsPorPartidaPorJogador.entrySet().stream()
                 .map(entry -> {
                     Partida partida = db.buscarPartidaPorId(entry.getKey());
                     StringBuilder sb = new StringBuilder();
@@ -46,14 +46,13 @@ public class PlacarDaPartidaComMaisGols {
                 .map(Map.Entry::getValue)
                 .orElse(List.of());
 
-        if (matchesWithMaxGoals.size() > 1) {
-            System.out.println("\nTHERE WERE " + matchesWithMaxGoals.size() + " MATCHES TIED FOR THE MOST GOALS\n\n");
+        if (partidasComMaisGols.size() > 1) {
+            System.out.println("\nHouveram " + partidasComMaisGols.size() + " Partidas empatadas em gols\n\n");
         } else {
-            System.out.println("WINNING MATCH\n");
+            System.out.println("Partida vitoriosa\n");
         }
 
-        matchesWithMaxGoals.forEach(System.out::println);
-
+        partidasComMaisGols.forEach(System.out::println);
         System.out.println("\n\n");
     }
 }
